@@ -1,4 +1,4 @@
-"""Create one ISO-formatted folder for every day in the current month."""
+"""Opret en ISO-formateret mappe for hver dag i den aktuelle måned."""
 
 from calendar import monthrange
 from datetime import date
@@ -6,57 +6,61 @@ from pathlib import Path
 
 
 def ask_target_directory() -> Path:
-    """Ask for an existing directory, defaulting to the current directory."""
+    """Spørg efter en eksisterende mappe; brug den aktuelle mappe som standard."""
     default = Path.cwd()
     while True:
-        answer = input(f"Target directory [{default}]: ").strip()
+        answer = input(f"Målmappe [{default}]: ").strip()
         target = Path(answer or default).expanduser()
         if target.exists() and target.is_dir():
             return target
-        print(f"'{target}' does not exist or is not a directory. Please try again.")
+        print(f"'{target}' findes ikke eller er ikke en mappe. Prøv igen.")
 
 
 def ask_format() -> str:
-    """Ask the user to select the only supported naming format."""
-    print("\nDate naming format:")
+    """Lad brugeren vælge det eneste understøttede navneformat."""
+    print("\nDatoformat:")
     print("1) YYYY-MM-DD (ISO 8601)")
     while True:
-        choice = input("Choose a format [1]: ").strip() or "1"
+        choice = input("Vælg format [1]: ").strip() or "1"
         if choice == "1":
             return "%Y-%m-%d"
-        print("Please choose 1: YYYY-MM-DD.")
+        print("Vælg 1: YYYY-MM-DD.")
 
 
 def ask_confirmation() -> bool:
-    """Require an explicit yes before creating folders."""
+    """Kræv en tydelig bekræftelse, før mapperne oprettes."""
     while True:
-        answer = input("\nCreate these folders? [y/N]: ").strip().lower()
-        if answer in {"y", "yes"}:
+        answer = input("\nOpret disse mapper? [j/nej]: ").strip().lower()
+        if answer in {"j", "ja", "y", "yes"}:
             return True
-        if answer in {"", "n", "no"}:
+        if answer in {"", "n", "nej", "no"}:
             return False
-        print("Please answer yes or no.")
+        print("Svar ja eller nej.")
 
 
 def main() -> None:
-    """Preview and create folders for every day in the current local month."""
+    """Vis og opret mapper for hver dag i den aktuelle lokale måned."""
     target = ask_target_directory()
     date_format = ask_format()
     today = date.today()
     days_in_month = monthrange(today.year, today.month)[1]
+    month_names = (
+        "januar", "februar", "marts", "april", "maj", "juni",
+        "juli", "august", "september", "oktober", "november", "december",
+    )
     folder_names = [
         date(today.year, today.month, day).strftime(date_format)
         for day in range(1, days_in_month + 1)
     ]
 
-    print(f"\nCurrent month: {today.strftime('%B %Y')}")
-    print(f"Target: {target}")
-    print("Planned folders:")
+    print(f"\nAktuel måned: {month_names[today.month - 1]} {today.year}")
+    print(f"Målmappe: {target}")
+    print("Planlagte mapper:")
     for name in folder_names:
         print(f"  {name}")
 
     if not ask_confirmation():
-        print("No folders were created.")
+        print("Der blev ikke oprettet nogen mapper.")
         return
 
     created = 0
@@ -74,8 +78,8 @@ def main() -> None:
         else:
             created += 1
 
-    print(f"\nCreated: {created}")
-    print(f"Skipped: {skipped}")
+    print(f"\nOprettet: {created}")
+    print(f"Sprunget over: {skipped}")
 
 
 if __name__ == "__main__":
