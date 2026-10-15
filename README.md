@@ -23,6 +23,17 @@ bruger kun Pythons standardbibliotek; ekstra pakker skal ikke installeres.
 - Python 3.10 eller nyere.
 - En terminal (for eksempel Terminal på macOS/Linux eller PowerShell på Windows).
 
+## Test
+
+Kør testene med Pythons standardbibliotek:
+
+```console
+python3 -m unittest discover -s tests -v
+```
+
+GitHub Actions kører automatisk testene ved push og pull requests på Python 3.10
+og 3.13.
+
 Tjek din Python-version med:
 
 ```console
